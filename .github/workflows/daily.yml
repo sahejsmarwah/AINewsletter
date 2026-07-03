@@ -1,0 +1,60 @@
+name: Daily Newsletter
+
+# Runs the full pipeline once a day: research -> editing -> send.
+# Also runnable on demand from the Actions tab (workflow_dispatch).
+on:
+  schedule:
+    - cron: "0 13 * * *"   # 13:00 UTC daily; adjust to taste
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Render only, do not send the email"
+        type: boolean
+        default: false
+
+jobs:
+  build-and-send:
+    runs-on: ubuntu-latest
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      NEWSLETTER_TO: ${{ secrets.NEWSLETTER_TO }}
+      GMAIL_CREDENTIALS_PATH: ${{ github.workspace }}/mcp_servers/gmail_server/credentials.json
+      GMAIL_TOKEN_PATH: ${{ github.workspace }}/mcp_servers/gmail_server/token.json
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write Gmail credentials from secrets
+        run: |
+          printf '%s' '${{ secrets.GMAIL_CREDENTIALS_JSON }}' > "$GMAIL_CREDENTIALS_PATH"
+          printf '%s' '${{ secrets.GMAIL_TOKEN_JSON }}' > "$GMAIL_TOKEN_PATH"
+
+      - name: Research phase
+        run: python src/research/agent.py
+
+      - name: Editing phase
+        run: python src/editing/agent.py
+
+      - name: Render newsletter
+        run: python src/design/formatter.py
+
+      - name: Send newsletter
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: python src/design/send.py
+
+      - name: Upload rendered HTML + snapshot as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newsletter-${{ github.run_id }}
+          path: |
+            newsletters/*.html
+            data/runs/*.json
+          if-no-files-found: ignore

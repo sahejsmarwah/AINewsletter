@@ -1,0 +1,12 @@
+# Defines the 9 sections every newsletter must have.
+# The editing phase writes data/runs/<date>_content.json matching this shape.
+sections:
+  - introduction
+  - big_story
+  - quick_updates      # 3-5 items
+  - top_papers
+  - top_repos
+  - tutorial
+  - top_products
+  - top_x_posts
+  - closing_notes

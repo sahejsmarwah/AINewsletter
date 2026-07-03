@@ -1,0 +1,172 @@
+{#
+  Newsletter email template.
+  Rendered by src/design/formatter.py from data/runs/<date>_content.json.
+  Inline styles + table layout on purpose - that's what survives email clients
+  (Gmail strips <style> blocks and most modern CSS). Sections whose data is
+  empty are omitted entirely.
+#}
+<div style="margin:0;padding:0;background:#f4f5f7;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+               style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a1a1a;">
+
+          {# ---- Header ---- #}
+          <tr>
+            <td style="background:#111827;padding:28px 32px;">
+              <div style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">
+                The AI Digest
+              </div>
+              <div style="font-size:13px;color:#9ca3af;margin-top:4px;">
+                {{ date }}
+              </div>
+            </td>
+          </tr>
+
+          {# ---- Introduction ---- #}
+          {% if introduction %}
+          <tr>
+            <td style="padding:28px 32px 8px 32px;font-size:16px;line-height:1.6;color:#374151;">
+              {{ introduction | paragraphs }}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Big story ---- #}
+          {% if big_story and big_story.title %}
+          <tr>
+            <td style="padding:20px 32px;">
+              {{ "Big story of the day" | section_label }}
+              <div style="font-size:20px;font-weight:700;line-height:1.35;margin:6px 0;">
+                {% if big_story.url %}<a href="{{ big_story.url }}" style="color:#111827;text-decoration:none;">{{ big_story.title }}</a>{% else %}{{ big_story.title }}{% endif %}
+              </div>
+              {% if big_story.source %}<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">{{ big_story.source }}</div>{% endif %}
+              <div style="font-size:15px;line-height:1.6;color:#374151;">{{ big_story.summary | paragraphs }}</div>
+              {% if big_story.why_it_matters %}
+              <div style="margin-top:12px;padding:12px 16px;background:#f0f7ff;border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;font-size:14px;line-height:1.55;color:#1e3a5f;">
+                <strong>Why it matters:</strong> {{ big_story.why_it_matters }}
+              </div>
+              {% endif %}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Quick updates ---- #}
+          {% if quick_updates %}
+          <tr>
+            <td style="padding:12px 32px;">
+              {{ "Quick updates" | section_label }}
+              {% for item in quick_updates %}
+              <div style="margin:12px 0;">
+                <div style="font-size:15px;font-weight:600;line-height:1.4;">
+                  {% if item.url %}<a href="{{ item.url }}" style="color:#111827;text-decoration:none;">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
+                </div>
+                {% if item.blurb %}<div style="font-size:14px;line-height:1.55;color:#6b7280;margin-top:2px;">{{ item.blurb }}</div>{% endif %}
+              </div>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Top papers ---- #}
+          {% if top_papers %}
+          <tr>
+            <td style="padding:12px 32px;">
+              {{ "Papers worth reading" | section_label }}
+              {% for p in top_papers %}
+              <div style="margin:12px 0;">
+                <div style="font-size:15px;font-weight:600;line-height:1.4;">
+                  {% if p.url %}<a href="{{ p.url }}" style="color:#111827;text-decoration:none;">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}
+                </div>
+                {% if p.authors %}<div style="font-size:12px;color:#9ca3af;margin-top:1px;">{{ p.authors }}</div>{% endif %}
+                {% if p.takeaway %}<div style="font-size:14px;line-height:1.55;color:#6b7280;margin-top:3px;">{{ p.takeaway }}</div>{% endif %}
+              </div>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Top repos ---- #}
+          {% if top_repos %}
+          <tr>
+            <td style="padding:12px 32px;">
+              {{ "Trending on GitHub" | section_label }}
+              {% for r in top_repos %}
+              <div style="margin:12px 0;">
+                <div style="font-size:15px;font-weight:600;line-height:1.4;">
+                  {% if r.url %}<a href="{{ r.url }}" style="color:#111827;text-decoration:none;">{{ r.name }}</a>{% else %}{{ r.name }}{% endif %}
+                  {% if r.stars %}<span style="font-size:12px;color:#9ca3af;font-weight:400;"> &nbsp;&#9733; {{ "{:,}".format(r.stars) }}</span>{% endif %}
+                </div>
+                {% if r.description %}<div style="font-size:14px;line-height:1.55;color:#6b7280;margin-top:2px;">{{ r.description }}</div>{% endif %}
+                {% if r.takeaway %}<div style="font-size:13px;line-height:1.5;color:#9ca3af;margin-top:2px;font-style:italic;">{{ r.takeaway }}</div>{% endif %}
+              </div>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Tutorial ---- #}
+          {% if tutorial and tutorial.title %}
+          <tr>
+            <td style="padding:12px 32px;">
+              {{ "Quick tutorial" | section_label }}
+              <div style="font-size:17px;font-weight:700;line-height:1.35;margin:6px 0 8px 0;">{{ tutorial.title }}</div>
+              <div style="font-size:15px;line-height:1.65;color:#374151;">{{ tutorial.body | paragraphs }}</div>
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Top products (optional; only when a source exists) ---- #}
+          {% if top_products %}
+          <tr>
+            <td style="padding:12px 32px;">
+              {{ "Products to try" | section_label }}
+              {% for p in top_products %}
+              <div style="margin:12px 0;">
+                <div style="font-size:15px;font-weight:600;line-height:1.4;">
+                  {% if p.url %}<a href="{{ p.url }}" style="color:#111827;text-decoration:none;">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}
+                </div>
+                {% if p.tagline %}<div style="font-size:14px;line-height:1.55;color:#6b7280;margin-top:2px;">{{ p.tagline }}</div>{% endif %}
+              </div>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Top X posts (optional; only when a source exists) ---- #}
+          {% if top_x_posts %}
+          <tr>
+            <td style="padding:12px 32px;">
+              {{ "From X" | section_label }}
+              {% for x in top_x_posts %}
+              <div style="margin:12px 0;font-size:14px;line-height:1.55;color:#374151;">
+                {% if x.url %}<a href="{{ x.url }}" style="color:#111827;">{{ x.text }}</a>{% else %}{{ x.text }}{% endif %}
+                {% if x.author %}<span style="color:#9ca3af;"> &mdash; {{ x.author }}</span>{% endif %}
+              </div>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Closing notes ---- #}
+          {% if closing_notes %}
+          <tr>
+            <td style="padding:16px 32px 28px 32px;font-size:15px;line-height:1.6;color:#374151;border-top:1px solid #eef0f2;">
+              {{ closing_notes | paragraphs }}
+            </td>
+          </tr>
+          {% endif %}
+
+          {# ---- Footer ---- #}
+          <tr>
+            <td style="background:#f9fafb;padding:18px 32px;font-size:12px;color:#9ca3af;text-align:center;">
+              Assembled automatically by an MCP research &rarr; editing &rarr; design pipeline.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>

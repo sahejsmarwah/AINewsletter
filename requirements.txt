@@ -1,0 +1,19 @@
+# Core MCP + research phase
+mcp>=1.0.0
+httpx>=0.27.0
+feedparser>=6.0.0
+beautifulsoup4>=4.12.0
+PyYAML>=5.4
+
+# Editing phase (LLM calls)
+groq>=0.11.0
+# google-genai>=0.1.0        # uncomment if using Gemini instead of/alongside Groq
+
+# Design phase
+jinja2>=3.1.0
+
+# Gmail MCP server (if building the custom OAuth-based one)
+google-auth-oauthlib>=1.2.0
+google-api-python-client>=2.130.0
+
+python-dotenv>=1.0.0

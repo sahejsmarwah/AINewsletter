@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+data/runs/*.json
+data/seen_items.db
+newsletters/*.html
+.venv/
+
+# Gmail OAuth secrets - never commit these
+mcp_servers/gmail_server/credentials.json
+mcp_servers/gmail_server/token.json

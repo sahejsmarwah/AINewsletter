@@ -1,0 +1,33 @@
+# Source configuration for the research phase.
+# The research agent reads this and passes the values to the MCP servers.
+# Keep it declarative - no code decisions here, just what to gather.
+
+arxiv:
+  categories: cs.AI,cs.CL,cs.LG   # comma-separated arXiv category codes
+  max_results: 20
+  days_back: 2
+
+github:
+  since: daily                    # daily | weekly | monthly
+  language: ""                    # "" = all languages, or e.g. "python"
+  limit: 15
+
+# RSS feeds for quick updates and big-story candidates. All confirmed
+# reachable without auth. Add/remove freely - the fetch server is generic.
+rss:
+  max_per_feed: 5
+  feeds:
+    - name: OpenAI
+      url: https://openai.com/blog/rss.xml
+    - name: Google AI
+      url: https://blog.google/technology/ai/rss/
+    - name: Hugging Face
+      url: https://huggingface.co/blog/feed.xml
+    - name: DeepMind
+      url: https://deepmind.google/blog/rss.xml
+
+# Hacker News (via the free Algolia API) for community-surfaced stories.
+hackernews:
+  query: AI OR LLM OR GPT OR "machine learning"
+  min_points: 50
+  limit: 15
